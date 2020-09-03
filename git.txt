@@ -1,0 +1,102 @@
+diff first second    >> shows differences in first and second
+diff -y first second >> shows differences in first and second side by side
+diff -u first second >> shows differences in first and second in =/- fashion
+
+
+patch >>used to patch two file(.py/.c)(first one original file and second fixed)
+
+procedure:
+
+cp original fixed
+
+diff -u original fixed > fixed.diff (Here we can also use patch file)
+
+patch original < fixed.diff
+
+=============================================================================================
+git init >> initializes git into a directory
+git config --global user.email "name.example@.com" >> to initialize git user email in git repository
+git config --global user.name "name" >> to initialize git username in git repository
+git config -l >> shows the config of git
+git log >>> to see the commit messages.
+git  status >> to see the git status
+git add >> to track a file
+git diff >> to see the differences
+ls -l .git >> to see the files inside git.
+git commit -a -m >> a shortcut to stage any changes to "tracked files " only and commit them in one step(add and commit in one step).
+head >> git uses the head alias to represent the currently checked-out snapshot of your project.
+git log -p >> It gives the information of associative patch patch that we changed earlier.
+git show id >> This commandtakes the parameter as id and shows the associative path.(For this command no need to scroll down.)(without id it shows us default head).
+git log --stat >> To show the stats of commits.
+git diff >> To help us see the changes that we have made.
+git add -p >> Shows the changes that we have made and asks that if we want to stage this changes.
+git diff --staged >> To dispkay the changes that we have not commited.
+git rm file-name >> Takes parameter of the file name that we wanted to delete and deletes it.After deleted we need to commit it to keep the git status clean.
+git mv file1 file2 >> To rename file in git.You should commit after renaming.
+.gitignore >> To ignore the files that are automatically gennerated by os system.for example in linux or OSx, .DS_STORE file(just add and commit).
+
+
+git checkout >> in order to revert / undo our changes before staged.
+git add * >> adds all changes we have made to stgging area.
+git reset HEAD file.name >> To remove changes from the stagging area before commiting.
+git reset HEAD -p filename or git checkout -p filename >> To choose which changes you wnt to undo.By rewriting the history
+
+git commit --amend >> to overwrite the wrong commit message after commiting.(You should'nt use amend when it is reached to public as it may lead to confusion.) 
+git revert HEAD >> TO rollback the changes or to revert back the changes(last) (bad commit).
+hash >> (not a command) It is a 40 character created by using the commit message,date,author,and the snapshot taken by the working tree.They provide the consistency that is crucial for distributed systems like git.(any one doe'nt match with one).It uses the software SHA1.
+git revert HEAD hashid >> it rollbacks the previous changes provided by hash id.
+
+
+branches >> (not an command) it is a pointer to commit.To enable changes to be worked on without disruptingthe most current working state.(default branch when you initialize git is master)
+git branch >> will show the list of all branches in your repository.
+git branch name >> takes name of branch as parameter and creates new branch
+git checkout >> also used to switcch b/w branches.We use git checkout to checkout the latest snapshot for both files and branches.
+git checkout -b name >> to create and to checkout (switch) the latest branch.
+git branch -d name >> to delete a branch
+git brach -r >> to see the remote branches.This branches are read only.We can look at theses commit mesaages but cannot modify directly.TO do this we should follow the general work flow of git.
+
+merging >> (not command) the term git uses to merge branches data and history together.Both the branches are pointed at same commit.There are two algorithms of merging:fast-forward and three - way merge(done normally by editing in master and add and commit) .If the commit path is linear then it uses fast-forward merge.If the commit path is non-linear it uses three-way merge.
+git merge name-branch >> to merge the branch into current branch(master).It is fast forward merge.
+merge conflict >> (not an command) we might find that both branches were trying to merge edits to the same part of same file.This results in merge conflict.
+ git log --graph >> To show graph of two merge branches
+ git log --oneline >> Shows log in one line.
+ git merge --abort >> reset the file to before commit merge.
+ 
+ git clone url >> takes url as parameter and copies the contents from git hub to local machine.
+ git push >> we can send the changes to remote repository
+ ssh-key pair >> (method) to avoid entering password and username repeateldy while pull and push ,clone
+ credential helper >> (method) (method) to avoid entering password and username repeateldy while pull and push ,clone for 15 minutes.This is in built in git build in
+ git config --global credential.helper cache >> To use credential helper method
+ (after clone)
+ 
+ git remote -v >> to see the configuration of that repo.
+ git remote show origin >> to show more information about origin.
+ git fetch >> This command copies the commits from remote repositories to remote branches.git fetch fetches remote updates but doesn't merge; git pull fetches remote updates and merges.
+ git log origin/master >> to see the current commits in remote branch.
+ git log -p origin/master >> To see the changes in remote branch
+ git merge origin/master >> to merge into remote repo into our current repository.
+ git pull >> to fetch and fast forward merge automatically from remote branch to current branch.
+ git checkout branchname >> to create a local copy of that branch.Used when there are more than 1 remote branch (other than master).You can see the remote branches by git remote show origin.
+ git remote update >>  If we want to get the contents of remote branches without automatically merging any contents into the local branches, we can call git remote update. 
+ 
+ git push -u origin <branch_name> >> to push a branch other than master to github.
+ git push --delete origin <Branch_Name> >> To push all data in the remote branch and delete it
+ git rebase  <branchName>  >> Puts the commits of branch on top of current branch 
+ 
+ Keep current stable versions on a seperate branch from master branch.
+ 
+ Forking >> A way of creating a copy of the given repository so that it belongs to user
+ We can create the fork by pressing the fork button on the github website.
+ we then clone it locally.
+ Pull request >> A commmit or series of commits that you send to the owner so that they incorporate into their tree.If you dont have the commit acess to that repo
+ We can update the pull request by simply add and commit and push he modifications
+
+ We can click on the pull request in the github website
+  git rebase -i master>> for syashing the changes
+  the default opyion is pick which takes the cmmits and rebases them into branch
+  second option is squash which takes the commits and to combine the both commits and editor opens for fuher changes
+  git push -f >> To push he commit forcely to the repo.Only to be done with pull request braches and not be done for public branches
+  
+  We include Closes #issue_number in the commit message to close the issue
+  
+  Continuos integration system >> Will run our tests automatically whech there are changes.
