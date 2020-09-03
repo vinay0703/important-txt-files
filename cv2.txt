@@ -1,0 +1,326 @@
+cv2 >> computer vision
+
+import cv2 >> to import cv2 module
+
+======================================================Chapter 1 Reading images and Capturing videos==========================================================
+
+cv2.imread('path') >> command to read images
+
+cv2.imshow("window_name",image_read) >> to show image.In this we nead to include the variable of cv.imread().
+
+cv2.waitKey(0) >> If you put 0 the image will appear for infinite time.The time is in milliseconds.For ex If you put 1000 it will appear for 1 second.
+
+cv2.VideoCapture("path") >> to capture the video inorder to play it.
+
+you use the following while loop to play video
+while True:
+	success, img=cap_variable.read()	#success is a boolean and use the variable which is assigned with cv2.VideoCapture()
+	cv2.imshow("Video",img)		#To show the instance of video or to play it
+	if waitKey(1) & 0xFF == ord('q'):	#to exit the video by pressing 'q'. '&' here is not logical operator 'and' .It is binary operator.
+		break
+ 
+capture_variable.set(id_no,value)  >> To modify the webcam.
+					We use the rest of the same(for video) as above for webcam.
+					We use the path as 0 if we have onewebcam. and if we want to use the 2nd webcam we use path as 1 in cv2.VideoCapture() 
+					we use id_no as 3 for changing width in set() Ex: cap.set(3,640)
+					we use id_no 4 for height for height in set() Ex:cap.set(4,480)
+					We use the id_no 10 for increasing brightness in set, Ex: cap.set(10,100)
+At last we use cap.release() and cv2.destroyAllWindows() to atop all proccess we we press q
+
+cv2.cvtColor(img,cv2.COLOR_BGR) >> converts your colour of image into different basis.Takes one parameter as image variable(cv2.imread()) and another as 						colour which you want to show
+					In cv2 we use colour contrast as BGR instead of RGB.
+					To convert to gray we use cv2.COLOR_BGR2GRAY.
+					
+=============================================================Chapter 2 Usefull tools=========================================================================
+
+cv2.GauussianBlur(img_variable,kernel_value,sigma_x) >> To blur the selecteed image.
+							   First parameter as image read variable(cv2.imread())
+							   Second parameter as kernel_value(oderof matrix) which is a double tuple in which both the values 								should be odd.
+							    Third parameter is sigma-x to increase blur which we use 0 by default.
+							    					
+cv2.Canny(img_name,thershold_1,thershold_2) >> To detect the edges of the image and thershold 1 and 2 are set to deafult by 100 and to reduce the edges we put 							150,200 vlues.		
+
+cv2.dialate(img_name,kernel_value,iterations) >> To increase the thickness of image inorder to get continous outline
+first parameter as img_name
+second parameter as kernel_vale which is the order of 1's matrix.We can use module numpy which deals with matrices in python
+kernel=numpy.ones(order_in_tupple,range) range represented as uint8 means unsigned int of 8 bit range is 0 to 255
+third parameter as iterations value which is the thickness of output.take as 1,2,3.....
+
+cv2.erode(img_name,kernel_value,iterations) >> oppposite to dilate function to make it thinner.Parameters same as cv2.dilate() function
+
+=================================================================Chapter 3 ResizeandCrop====================================================================
+
+image_name.shape >> used to print() the shape of our image in (x,y,BGR_value) BGR_value is 3 for colour photos.Image_name is variable assigned with 					cv2.imread()  
+
+cv2.resize(img_name,(width,height)) >> To resize the image by taking two parameters image_name variable(cv2.imread()) and resize tuple.
+
+image_name[h1:h2,w1:w2] >> To crop the image simply without using cv2 module and using simple python slicing technique. 
+
+================================================================Chapter 4 Color & shape======================================================================
+
+image[h1:h2,w1:w2]=B,G,R >> to colour the image B G R are values between 0 and 255 and to color we use img=numpy.zeros((h1,w1,BGR_value),numpy.uint8)
+cv2.line(img_name,(w1:h1),(w2:h2),(B,G,R),thickness) >> to draw a line on a image
+cv2.rectangle(img_name,(w1:h1),(w2:h2),(B,G,R),thickness) >> to draw a rectangle on a image.We can use cv2.FILLED in order to get filled color.
+cv2.circle(img_name,(x_centre,y_centre),radius,(B,G,R),thickness) >> to draw a cicle on a image
+cv2.putText(img,your_string,(x_position,y_position),cv2.FONT_ ,scale(in int or float),(B,G,R),thickness) >> To put text on images.
+
+===============================================================Chapter 5 Warp prespective====================================================================
+
+matrix=cv2.getPerspectiveTransform(pts1,pts2) 
+cv2.warpPrespective(img_name,matrix,(width,height)) >> To get warp perspective of image i.e; Camscanner
+width,height = a,b
+pts1=numpy.float32([[],[],[],[]]) 					#co-oridinates of location of portion in image
+pts2=numpy.float32([[0,0],[width,0],[0,height],[width,height]]) 	#co-ordiantes of portion size in image
+
+===============================================================Chapter 6 Joining images======================================================================
+
+ numpy.hstack((img_name,img_name)) >> To horizontally_stack images
+ numpy.vstack((img_name,img_name)) >> To vertically stack images
+ 
+def stackImages(scale,imgArray):		#imgArray is tuple of lists
+    rows = len(imgArray)
+    cols = len(imgArray[0])
+    rowsAvailable = isinstance(imgArray[0], list)
+    width = imgArray[0][0].shape[1]
+    height = imgArray[0][0].shape[0]
+    if rowsAvailable:
+        for x in range ( 0, rows):
+            for y in range(0, cols):
+                if imgArray[x][y].shape[:2] == imgArray[0][0].shape [:2]:
+                    imgArray[x][y] = cv2.resize(imgArray[x][y], (0, 0), None, scale, scale)
+                else:
+                    imgArray[x][y] = cv2.resize(imgArray[x][y], (imgArray[0][0].shape[1], imgArray[0][0].shape[0]), None, scale, scale)
+                if len(imgArray[x][y].shape) == 2: imgArray[x][y]= cv2.cvtColor( imgArray[x][y], cv2.COLOR_GRAY2BGR)
+        imageBlank = np.zeros((height, width, 3), np.uint8)
+        hor = [imageBlank]*rows
+        hor_con = [imageBlank]*rows
+        for x in range(0, rows):
+            hor[x] = np.hstack(imgArray[x])
+        ver = np.vstack(hor)
+    else:
+        for x in range(0, rows):
+            if imgArray[x].shape[:2] == imgArray[0].shape[:2]:
+                imgArray[x] = cv2.resize(imgArray[x], (0, 0), None, scale, scale)
+            else:
+                imgArray[x] = cv2.resize(imgArray[x], (imgArray[0].shape[1], imgArray[0].shape[0]), None,scale, scale)
+            if len(imgArray[x].shape) == 2: imgArray[x] = cv2.cvtColor(imgArray[x], cv2.COLOR_GRAY2BGR)
+        hor= np.hstack(imgArray)
+        ver = hor
+    return ver
+
+=================================================================Chapter 7 Colour Detection==================================================================
+
+First convert the image into HSV color by cv2.cvtColor(image_name,cv2.COLOR_BGR2HSV)
+
+Second create trackbars for min,max values of hue,saturation,value
+	cv2.namedWindow("Window_name(in quotes)") >> TO create a new window and the name should be provided in quotes
+	cv2.resizeWindow("Window_name(in quotes)",size_tuple) >> TO resize a new window
+	cv2.createTrackbar("Value_name","Window name",initial value,max value,onchange_func(a)) >> TO create trackbars.You should provide the names of 
+													values and window in quotes.on change is the function
+													which you want to do when you change values in 													trackbars should take argument.
+	Max value of hue is 360 but in open cv2 it is 179 i.e;0 to 179 Rest all have max as 255.
+	
+Third read the trackbar values min,max of hue,saturation,value
+	cv2.getTrackbarPos("Samevalname_As_createTrackbar","WINdow_name_SAme") >> TO reead the trackbar values.
+
+	We should use web_cam method i.e; Except step 2 put imread,step3,first step in while True loop. You should put waitKey as "1" as you donot need to 		pause it 	for more time
+
+Fourth create the mask to get the particular color in that range and show the mask by cv2.imshow() in while loop
+	cv2.inRange(HSV_img_name,lower_limit,upper_limit) >> To create a mask for matching the color.
+	lower=numpy.array([h_min,v_min,s_min])
+	higher=numpy.array([h_max,v_max,s_max])
+
+Five we should produce the result image by bitwise and operator on mask and original image and display the ouput of bitwise by changing the inital values of hue,sat,values by trackbars values 
+	cv2.bitwise_and(img,img,mask=mask) # here always use keyword argument in mask
+
+================================================================Chapter 8 Contours and shapes================================================================
+
+First convert image to gray and convert gray image to blur and convert blur to canny image
+	use a stack and show all
+	blank_image=np.zeros_like(img_name) >> To prodeuce a image of blank space
+
+Second create a function getcontours 
+def getcontours(img):           #Here image is cnny image
+    """To get the contour"""
+    contours,hierachy=cv2.findContours(img,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_NONE) #image and retrival methods and approx value
+    for cnt in contours:
+        area=cv2.contourArea(cnt) #cv2.contourArea for finding the area of contours
+        print(area)
+        if area > 500:                                    #TO give threshold inorder to avoid noises
+            cv2.drawContours(img_contour,cnt,-1,(255,0,0),3) #img_contour is image which we copied from original image
+                                                         #by img.copy().cnt is contour here.We provide contour vale as -1
+                                                         #inorder to all contours and provide color and thickness
+            peri=cv2.arcLength(cnt,True)                 # to find the arc length inorder to get peri
+            print(peri)
+            approx=cv2.approxPolyDP(cnt,0.02*peri,True)  # To find the vertices of polygon
+            obj_corners=len(approx)
+            x,y,w,h = cv2.boundingRect(approx)          #TO draw the bounding box around shapes
+            cv2.rectangle(img_contour,(x,y),(x+w,y+h),(255,0,0),3)
+            if obj_corners == 3:obj_type="Triangle"
+            elif obj_corners == 4:
+                aspratio=float(w/h)  #if aspect ratio is 1 then it is square
+                if aspratio >= 0.95 and aspratio <= 1.05:obj_type="square"
+                else:obj_type="rectangle"
+            elif obj_corners > 4:obj_type="Circle"
+            else:obj_type="None"
+            cv2.putText(img_contour,obj_type,(x+(w//2),y+(h//2)),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),3)
+
+third caLL THis function by pass a copyimage argument by img.copy()
+
+=============================================================Chapter 9 Face Detection========================================================================
+
+ download cascades xml's from open cv website
+ 
+ cv2.CascadeClassifier(path_cascade_xml) >> To add a cascade
+ .detectMultiScale(img_gray,scale_factor,min_neighbours) >> to detect the faces.We use this variable by CascadeClassifier variable
+ 
+ """Scale factor in detect multiple scale should be always >1 .Example we took 1.1
+ 
+ step 2 run a for lopp to draw the boundary rectangle
+ for (x,y,w,h) in faces_detect_vairaible:					#Here you will automaticaaly get the values of x,y,w,h
+ 	cv2.rectangle(img_name,(x,y),(x+w,y+h),(B,G,R),thickness) 
+ 	
+ ==============================================================Number plate detector=========================================================================
+ 
+#!/usr/bin/env python3
+#Shebang line
+import cv2
+import numpy as np
+path="/home/vinay_araveti/Desktop/haarcascades/indian_number_plate.xml"
+###############################################################################
+min_area=500
+count=0
+cap=cv2.VideoCapture(0)
+cap.set(3,640)
+cap.set(4,480)
+cap.set(10,100)
+###############################################################################
+platecascade=cv2.CascadeClassifier(path)
+while True:
+    success,img=cap.read()
+    img_gray=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+    n_plates=platecascade.detectMultiScale(img_gray,1.1,4)
+    for (x,y,w,h) in n_plates:
+        area=w*h
+        if area > min_area:
+            cv2.rectangle(img,(x,y),(x+w,y+h),(255,255,255),3)
+            cv2.putText(img,"N plate",(x+w,y+h),cv2.FONT_HERSHEY_TRIPLEX,1,(255,255,255),3)
+            img_roi=img[y:y+h,x:x+w]
+            cv2.imshow("img roi",img_roi)
+    cv2.imshow("Cap",img)
+    if cv2.waitKey(1) & 0xFF == ord('s'):
+         cv2.imwrite("Scanned/No_plate_"+str(count)+".jpg",img_roi)
+         cv2.rectangle(img,(0,200),(640,300),(255,0,0),cv2.FILLED)
+         cv2.putText(img,"Scan Saved",(150,265),cv2.FONT_HERSHEY_SIMPLEX,2,(0,0,255),2)
+         cv2.imshow("Result",img)
+         cv2.waitKey(500)
+         count+=1
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
+
+         
+ ============================================================================================================================================================
+ 
+ 
+ 
+ 
+ def alarm(msg):
+    global alarm_status
+    global alarm_status2
+    global saying
+
+    while alarm_status:
+        print('call')
+        s = 'espeak "'+msg+'"'
+        os.system(s)
+
+    if alarm_status2:
+        print('call')
+        saying = True
+        s = 'espeak "' + msg + '"'
+        os.system(s)
+        saying = False
+
+def calculate_ear(eye):
+    a=distance.euclidean(eye[1],eye[5])
+    b=distance.euclidean(eye[2],eye[4])
+    c=distance.euclidean(eye[0],eye[3])
+    ear=(a+b)/(2*c)
+    return ear
+ap = argparse.ArgumentParser()
+ap.add_argument("-w", "--webcam", type=int, default=0,
+                help="index of webcam on system")
+args = vars(ap.parse_args())
+detector=dlib.get_frontal_face_detector()
+predictor=dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
+cap= VideoStream(src=args["webcam"]).start()
+
+time.sleep(1.0)
+counter=0
+while True:
+    img=cap.read()
+    img_gray=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+    print(img.shape)
+    faces=detector(img_gray)
+    for face in faces:
+        landmarks=predictor(img_gray,face)
+        print(landmarks)
+        left_eye=[]
+        right_eye=[]
+
+        for n in range(36,42): #for left eyes
+            x=landmarks.part(n).x
+            y=landmarks.part(n).y
+            left_eye.append((x,y))
+            next_point=n+1
+            if n == 41:
+                next_point=36
+            x2=landmarks.part(next_point).x
+            y2=landmarks.part(next_point).y
+            cv2.line(img,(x,y),(x2,y2),(0,225,0),1)
+        for n in range(42,48): #for right eyes
+            x=landmarks.part(n).x
+            y=landmarks.part(n).y
+            right_eye.append((x,y))
+            next_point=n+1
+            if n==47:
+                next_point=42
+            x2=landmarks.part(next_point).x
+            y2=landmarks.part(next_point).y
+            cv2.line(img,(x,y),(x2,y2),(0,255,0),1)
+        #for n in range(48,61): #for external lips
+            #x=landmarks.part(n).x
+            #y=landmarks.part(n).y
+            #next_point=n+1
+            #if n == 60:
+                #next_point=48
+            #x2=landmarks.part(next_point).x
+            #y2=landmarks.part(next_point).y
+            #cv2.line(img,(x,y),(x2,y2),(0,255,0),1)
+
+        left_ear=calculate_ear(left_eye)
+        right_ear=calculate_ear(right_eye)
+        ear=(left_ear+right_ear)/2
+        ear=round(ear,2)
+        print(ear)
+        if ear < 0.26:
+            counter+=1
+            if counter >=30:
+                if alarm_status == False:
+                    alarm_status=True
+                    t=Thread(target=alarm,args=('wakeup sir',))
+                    t.deamon=True
+                    t.start()
+                cv2.putText(img,"DROWSINESS ALERT",(10,30),cv2.FONT_HERSHEY_PLAIN,0.7,(0,0,255),2)
+        else:
+            Counter=0
+            alarm_status=False
+    cv2.imshow("Cap",img)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
